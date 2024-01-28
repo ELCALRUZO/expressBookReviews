@@ -10,9 +10,16 @@ app.use(express.json());
 
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
-app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
-});
+app.use("/customer/auth/*", function auth(req, res, next){
+    // Check if the user is authenticated using the session and access token
+    if (req.session && req.session.accessToken) {
+      // Access token is found in the session, user is authenticated
+      next();
+    } else {
+      // Access token is not found, user is not authenticated
+      res.status(401).json({ message: 'Unauthorized access' });
+    }
+  });
  
 const PORT =5000;
 
